@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/entity"
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/helper"
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/service"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
@@ -61,16 +63,27 @@ func (c *feedbackController) Insert(context *gin.Context) {
 		res := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
 		context.JSON(http.StatusBadRequest, res)
 	} else {
-		// authHeader := context.GetHeader("Authorization")
-		// userID := c.getUserIDByToken(authHeader)
-		// convertedUserID, err := strconv.ParseUint(userID, 10, 64)
-		// if err == nil {
-		// 	produkCreateDTO.UserID = convertedUserID
-		// }
+		authHeader := context.GetHeader("Authorization")
+		id_customer := c.getUserIDByToken2(authHeader)
+
+		convertedUserID, err := strconv.ParseUint(id_customer, 10, 64)
+		if err == nil {
+			feedbackCreateDTO.Id_customer = convertedUserID
+		}
 		result := c.feedbackService.Insert(feedbackCreateDTO)
 		response := helper.BuildResponse(true, "OK", result)
 		context.JSON(http.StatusOK, response)
 	}
+}
+
+func (c *feedbackController) getUserIDByToken2(token string) string { //fungsi menampilkan data sesuai ID
+	aToken, err := c.jwtService.ValidateToken(token)
+	if err != nil {
+		panic(err.Error())
+	}
+	claims := aToken.Claims.(jwt.MapClaims)
+	id := fmt.Sprintf("%v", claims["user_id"])
+	return id
 }
 
 func (c *feedbackController) Update(context *gin.Context) {
