@@ -1,32 +1,35 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/config"
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/controller"
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/middleware"
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/repository"
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/service"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 var (
-	db             *gorm.DB                  = config.SetupDatabaseConnection()
-	userRepository repository.UserRepository = repository.NewUserRepository(db)
-	produkRepository repository.ProdukRepository = repository.NewProdukRepository(db)
+	db                  *gorm.DB                       = config.SetupDatabaseConnection()
+	userRepository      repository.UserRepository      = repository.NewUserRepository(db)
+	produkRepository    repository.ProdukRepository    = repository.NewProdukRepository(db)
 	keranjangRepository repository.KeranjangRepository = repository.NewKeranjangRepository(db)
 	pemesananRepository repository.PemesananRepository = repository.NewPemesananRepository(db)
-	jwtService     service.JWTService        = service.NewJWTService()
-	userService    service.UserService       = service.NewUserService(userRepository)
-	produkService    service.ProdukService       = service.NewProdukService(produkRepository)
+	feedbackRepository  repository.FeedbackRepository  = repository.NewFeedbackRepository(db)
+	jwtService          service.JWTService             = service.NewJWTService()
+	userService         service.UserService            = service.NewUserService(userRepository)
+	produkService       service.ProdukService          = service.NewProdukService(produkRepository)
 	keranjangService    service.KeranjangService       = service.NewKeranjangService(keranjangRepository)
 	pemesananService    service.PemesananService       = service.NewPemesananService(pemesananRepository)
-	authService    service.AuthService       = service.NewAuthService(userRepository)
-	authController controller.AuthController = controller.NewAuthController(authService, jwtService)	
-	userController controller.UserController = controller.NewUserController(userService, jwtService)	
-	produkController controller.ProdukController = controller.NewProdukController(produkService, jwtService)	
-	keranjangController controller.KeranjangController = controller.NewKeranjangController(keranjangService, jwtService)	
-	pemesananController controller.PemesananController = controller.NewPemesananController(pemesananService, jwtService)	
+	feedbackService     service.FeedbackService        = service.NewFeedbackService(feedbackRepository)
+	authService         service.AuthService            = service.NewAuthService(userRepository)
+	authController      controller.AuthController      = controller.NewAuthController(authService, jwtService)
+	userController      controller.UserController      = controller.NewUserController(userService, jwtService)
+	produkController    controller.ProdukController    = controller.NewProdukController(produkService, jwtService)
+	keranjangController controller.KeranjangController = controller.NewKeranjangController(keranjangService, jwtService)
+	pemesananController controller.PemesananController = controller.NewPemesananController(pemesananService, jwtService)
+	feedbackController  controller.FeedbackController  = controller.NewFeedbackController(feedbackService, jwtService)
 )
 
 func main() {
@@ -65,7 +68,6 @@ func main() {
 		keranjangRoutes.DELETE("/:id", keranjangController.Delete)
 	}
 
-	
 	pemesananRoutes := r.Group("api/pemesanans", middleware.AuthorizeJWT(jwtService))
 	{
 		pemesananRoutes.GET("/", pemesananController.All)
@@ -74,6 +76,15 @@ func main() {
 		pemesananRoutes.GET("/:id", pemesananController.FindByID)
 		pemesananRoutes.PUT("/:id", pemesananController.Update)
 		pemesananRoutes.DELETE("/:id", pemesananController.Delete)
+	}
+
+	feedbackRoutes := r.Group("api/feedbacks", middleware.AuthorizeJWT(jwtService))
+	{
+		feedbackRoutes.GET("/", feedbackController.All)
+		feedbackRoutes.POST("/", feedbackController.Insert)
+		feedbackRoutes.GET("/:id", feedbackController.FindByID)
+		feedbackRoutes.PUT("/:id", feedbackController.Update)
+		feedbackRoutes.DELETE("/:id", feedbackController.Delete)
 	}
 	r.Run()
 }

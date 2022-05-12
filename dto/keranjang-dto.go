@@ -16,4 +16,3 @@ type KeranjangCreateDTO struct {
 	Kuantitas   uint64 `json:"kuantitas" form:"kuantitas"`
 	Total       uint64 `json:"total" form:"total"`
 }
-
