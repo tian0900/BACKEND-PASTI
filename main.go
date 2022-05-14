@@ -78,7 +78,7 @@ func main() {
 		pemesananRoutes.DELETE("/:id", pemesananController.Delete)
 	}
 
-	feedbackRoutes := r.Group("api/feedbacks", middleware.AuthorizeJWT(jwtService))
+	feedbackRoutes := r.Group("api/feedbacks")
 	{
 		feedbackRoutes.GET("/", feedbackController.All)
 		feedbackRoutes.POST("/", feedbackController.Insert)
