@@ -41,8 +41,8 @@ func (c *authController) Login(ctx *gin.Context) { //fungsi login
 	if v, ok := authResult.(entity.User); ok {
 		generatedToken := c.jwtService.GenerateToken(strconv.FormatUint(v.User_id, 10))
 		v.Token = generatedToken
-		response := helper.BuildResponse(true, "OK!", v)
-		ctx.JSON(http.StatusOK, response) 
+		// response := helper.BuildResponse(true, "OK!", v)
+		ctx.JSON(http.StatusOK, v) 
 		return
 	}
 	response := helper.BuildErrorResponse("Please check again your credential", "Invalid Credential", helper.EmptyObj{}) 
