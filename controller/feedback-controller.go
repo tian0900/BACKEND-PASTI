@@ -63,13 +63,7 @@ func (c *feedbackController) Insert(context *gin.Context) {
 		res := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
 		context.JSON(http.StatusBadRequest, res)
 	} else {
-		authHeader := context.GetHeader("Authorization")
-		id_customer := c.getUserIDByToken2(authHeader)
 
-		convertedUserID, err := strconv.ParseUint(id_customer, 10, 64)
-		if err == nil {
-			feedbackCreateDTO.Id_customer = convertedUserID
-		}
 		result := c.feedbackService.Insert(feedbackCreateDTO)
 		response := helper.BuildResponse(true, "OK", result)
 		context.JSON(http.StatusOK, response)
