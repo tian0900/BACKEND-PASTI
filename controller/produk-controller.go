@@ -16,6 +16,7 @@ type ProdukController interface {
 	FindByID(context *gin.Context)
 	Insert(context *gin.Context)
 	Update(context *gin.Context)
+	UpdateStok(context *gin.Context)
 	Delete(context *gin.Context)
 }
 
@@ -105,5 +106,38 @@ func (c *produkController) Delete(context *gin.Context) {
 	c.produkService.Delete(produk)
 	res := helper.BuildResponse(true, "Delete", helper.EmptyObj{})
 	context.JSON(http.StatusOK, res)
+
+}
+
+
+func (c *produkController) UpdateStok(context *gin.Context) {
+	var produkUpdateDTO dto.ProdukUpdateDTO
+	errDTO := context.ShouldBind(&produkUpdateDTO)
+	if errDTO != nil {
+		res := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
+		context.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	id, err := strconv.ParseUint(context.Param("id"), 0, 0)
+	if err != nil {
+		response := helper.BuildErrorResponse("Failed to get id", "No param id were found", helper.EmptyObj{})
+		context.JSON(http.StatusBadRequest, response)
+	}
+
+	var produk entity.Produk = c.produkService.FIndById(id)
+	if (produk == entity.Produk{}) {
+		res := helper.BuildErrorResponse("Data not found", "No Data with given id", helper.EmptyObj{})
+		context.JSON(http.StatusNotFound, res)
+	} 
+	produkUpdateDTO.Produk_id = id
+	produkUpdateDTO.Stok = produk.Stok - produkUpdateDTO.Kuantitas
+	produkUpdateDTO.Harga = produk.Harga
+	produkUpdateDTO.Gambar = produk.Gambar
+	produkUpdateDTO.Kategori = produk.Kategori
+	produkUpdateDTO.Nama = produk.Nama
+	result := c.produkService.Update(produkUpdateDTO)
+	response := helper.BuildResponse(true, "OK", result)
+	context.JSON(http.StatusOK, response)
 
 }

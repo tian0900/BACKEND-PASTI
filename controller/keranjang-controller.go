@@ -73,6 +73,7 @@ func (c *keranjangController) FindByID(context *gin.Context) {
 
 func (c *keranjangController) Insert(context *gin.Context) {
 	var keranjangCreateDTO dto.KeranjangCreateDTO
+	
 	errDTO := context.ShouldBind(&keranjangCreateDTO)
 	if errDTO != nil {
 		res := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
@@ -81,6 +82,7 @@ func (c *keranjangController) Insert(context *gin.Context) {
 
 		keranjangCreateDTO.Kuantitas = keranjangCreateDTO.Stok
 		keranjangCreateDTO.Total = keranjangCreateDTO.Harga * keranjangCreateDTO.Stok
+		
 		
 		result := c.keranjangService.Insert(keranjangCreateDTO)
 		response := helper.BuildResponse(true, "OK", result)

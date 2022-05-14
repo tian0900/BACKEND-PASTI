@@ -54,6 +54,7 @@ func main() {
 		produkRoutes.POST("/", produkController.Insert)
 		produkRoutes.GET("/:id", produkController.FindByID)
 		produkRoutes.PUT("/:id", produkController.Update)
+		produkRoutes.PUT("/stok/:id", produkController.UpdateStok)
 		produkRoutes.DELETE("/:id", produkController.Delete)
 	}
 
