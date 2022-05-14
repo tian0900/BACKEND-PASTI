@@ -80,15 +80,10 @@ func (c *keranjangController) Insert(context *gin.Context) {
 		res := helper.BuildErrorResponse("Failed to process request", errDTO.Error(), helper.EmptyObj{})
 		context.JSON(http.StatusBadRequest, res)
 	} else {
-		authHeader := context.GetHeader("Authorization")
-		id_customer := c.getUserIDByToken(authHeader)
 
-		convertedUserID, err := strconv.ParseUint(id_customer, 10, 64)
-		if err == nil {
-			keranjangCreateDTO.Id_customer = convertedUserID
-			keranjangCreateDTO.Kuantitas = keranjangCreateDTO.Stok
-			keranjangCreateDTO.Total = keranjangCreateDTO.Harga * keranjangCreateDTO.Stok
-		}
+		keranjangCreateDTO.Kuantitas = keranjangCreateDTO.Stok
+		keranjangCreateDTO.Total = keranjangCreateDTO.Harga * keranjangCreateDTO.Stok
+		
 		result := c.keranjangService.Insert(keranjangCreateDTO)
 		response := helper.BuildResponse(true, "OK", result)
 		context.JSON(http.StatusOK, response)
@@ -176,7 +171,7 @@ func (c *keranjangController) InsertPemesanan(context *gin.Context) {
 			pemesananCreateDTO.Tanggal_pemesanan = time.Now()
 			pemesananCreateDTO.Status = "Verifikasi"
 		}
-		
+
 		var pemesananDetailCreateDTO dto.PemesananDetailCreateDTO
 		errDTO1 := context.ShouldBind(&pemesananDetailCreateDTO)
 		if errDTO1 != nil {

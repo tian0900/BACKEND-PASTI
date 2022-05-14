@@ -57,7 +57,7 @@ func main() {
 		produkRoutes.DELETE("/:id", produkController.Delete)
 	}
 
-	keranjangRoutes := r.Group("api/keranjangs", middleware.AuthorizeJWT(jwtService))
+	keranjangRoutes := r.Group("api/keranjangs")
 	{
 		keranjangRoutes.GET("/", keranjangController.All)
 		keranjangRoutes.GET("/user", keranjangController.FindUserID)
@@ -78,7 +78,7 @@ func main() {
 		pemesananRoutes.DELETE("/:id", pemesananController.Delete)
 	}
 
-	feedbackRoutes := r.Group("api/feedbacks", middleware.AuthorizeJWT(jwtService))
+	feedbackRoutes := r.Group("api/feedbacks")
 	{
 		feedbackRoutes.GET("/", feedbackController.All)
 		feedbackRoutes.POST("/", feedbackController.Insert)
