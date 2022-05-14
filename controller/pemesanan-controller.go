@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"time"
+
 
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/dto"
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/entity"
@@ -74,7 +74,6 @@ func (c *pemesananController) Insert(context *gin.Context) {
 
 		if err == nil {
 			pemesananCreateDTO.Id_customer = convertedUserID
-			pemesananCreateDTO.Tanggal_pemesanan = time.Now()
 			pemesananCreateDTO.Status = "Verifikasi"
 		}
 		result := c.pemesananService.Insert(pemesananCreateDTO)

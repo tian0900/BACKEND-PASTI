@@ -5,8 +5,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"net/http"
 	"strconv"
-	"time"
-
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/dto"
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/entity"
 	"github.com/NestyTampubolon/golang_gin_gorm_JWT/helper"
@@ -168,7 +166,6 @@ func (c *keranjangController) InsertPemesanan(context *gin.Context) {
 
 		if err == nil {
 			pemesananCreateDTO.Id_customer = convertedUserID
-			pemesananCreateDTO.Tanggal_pemesanan = time.Now()
 			pemesananCreateDTO.Status = "Verifikasi"
 		}
 
