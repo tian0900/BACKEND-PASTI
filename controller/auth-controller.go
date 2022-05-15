@@ -61,6 +61,7 @@ func (c *authController) Register(ctx *gin.Context) { //fungsi Register
 		response := helper.BuildErrorResponse("Failed to process request", "Duplicate email", helper.EmptyObj{})
 		ctx.JSON(http.StatusConflict, response)
 	} else {
+		registerDTO.Role = "Customer"
 		createdUser := c.authService.CreateUser(registerDTO)
 		token := c.jwtService.GenerateToken(strconv.FormatUint(createdUser.User_id, 10))
 		createdUser.Token = token
